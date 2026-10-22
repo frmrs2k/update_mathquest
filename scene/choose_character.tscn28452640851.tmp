@@ -1,0 +1,123 @@
+[gd_scene format=3 uid="uid://cypichrghvpjh"]
+
+[ext_resource type="Texture2D" uid="uid://dho2mjhdt7pnm" path="res://art/background/choose_char.png" id="1_bfcii"]
+[ext_resource type="Texture2D" uid="uid://dwctwd3urbj2n" path="res://art/button/back.png" id="2_jnwa5"]
+[ext_resource type="PackedScene" uid="uid://bdt8j8ab24j1p" path="res://scene/char/m_archer.tscn" id="4_0id4g"]
+[ext_resource type="PackedScene" uid="uid://c5gtbrhotftid" path="res://scene/char/m_wizard.tscn" id="4_id3v0"]
+[ext_resource type="PackedScene" uid="uid://c2bndqjpoymog" path="res://scene/char/f_archer.tscn" id="5_mljve"]
+
+[sub_resource type="GDScript" id="GDScript_8y302"]
+script/source = "extends Control
+
+var character_files = [
+	preload(\"res://scene/m_wizard.tscn\"),
+	preload(\"res://scene/m_archer.tscn\"),
+	preload(\"res://scene/f_wizard.tscn\"),
+	preload(\"res://scene/f_archer.tscn\"),
+	preload(\"res://scene/warrior.tscn\"),
+	preload(\"res://scene/princess.tscn\")
+]
+
+@onready var container = $CharacterContainer
+
+# Dito natin i-save kung sino ang napili (para gamitin sa Confirm button)
+var selected_character_name = \"\"
+
+func _ready():
+	# Kunin laki ng screen
+	var screen_size = get_viewport_rect().size
+	var center_x = screen_size.x / 2
+	var center_y = screen_size.y / 2
+
+	# Grid Settings (I-adjust mo ito kung magkakapatong sila)
+	var max_columns = 3
+	var x_spacing = 120.0
+	var y_spacing = 150.0
+	
+	var start_x = center_x - x_spacing
+	var start_y = center_y - y_spacing
+
+	for i in range(character_files.size()):
+		var new_char = character_files[i].instantiate()
+		
+		var col = i % max_columns 
+		var row = int(i / max_columns) 
+		
+		new_char.position = Vector2(start_x + (col * x_spacing), start_y + (row * y_spacing))
+		
+		# Ikonekta yung click
+		if new_char.has_signal(\"char_clicked\"):
+			new_char.char_clicked.connect(_on_character_picked)
+		
+		container.add_child(new_char)
+
+# Ito ang tatakbo kapag may tinapik na character
+func _on_character_picked(char_name):
+	selected_character_name = char_name
+	print(\"Napili mo si: \", char_name)
+	
+	# Dito mo ilalagay yung logic para mag-highlight yung napili
+	# (Halimbawa: Palitan mo yung kulay ng character)
+"
+
+[sub_resource type="SystemFont" id="SystemFont_vd3ky"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ayshr"]
+bg_color = Color(0.5315574, 0.0035299093, 0.92003095, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 6
+border_color = Color(0.0076186024, 0.0076186024, 0.0076186024, 1)
+border_blend = true
+corner_radius_top_left = 50
+corner_radius_top_right = 50
+corner_radius_bottom_right = 50
+corner_radius_bottom_left = 50
+
+[node name="choose_character" type="Control" unique_id=879888319]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 37.0
+offset_bottom = 40.0
+script = SubResource("GDScript_8y302")
+
+[node name="background" type="TextureRect" parent="." unique_id=1003738255]
+texture_filter = 1
+texture_repeat = 1
+layout_mode = 0
+offset_right = 611.0
+offset_bottom = 1062.0
+texture = ExtResource("1_bfcii")
+expand_mode = 1
+
+[node name="confirm" type="Button" parent="." unique_id=982184027]
+layout_mode = 0
+offset_left = 373.0
+offset_top = 874.0
+offset_right = 561.0
+offset_bottom = 936.0
+theme_override_colors/font_color = Color(16.638432, 16.638432, 16.638432, 1)
+theme_override_fonts/font = SubResource("SystemFont_vd3ky")
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_ayshr")
+text = "Confirm"
+
+[node name="back" type="TextureButton" parent="." unique_id=23163590]
+layout_mode = 0
+offset_left = 17.0
+offset_top = 7.0
+offset_right = 107.0
+offset_bottom = 124.0
+texture_normal = ExtResource("2_jnwa5")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="m_wizard" parent="." unique_id=854120476 instance=ExtResource("4_id3v0")]
+position = Vector2(-104, 61)
+
+[node name="m_archer" parent="." unique_id=150782882 instance=ExtResource("4_0id4g")]
+position = Vector2(-10, 17)
+
+[node name="f_archer" parent="." unique_id=508012325 instance=ExtResource("5_mljve")]
+position = Vector2(197, -62)
